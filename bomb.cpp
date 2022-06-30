@@ -123,22 +123,22 @@ const char *Bomb::getImage2(int i, int j)
 {
     if (m->MAPTool[i][j] == 1)
     {
-        m->NOWTool[i][j] = 1;
+        m->NOWTool[i][j] = 1; // SPEED
         return ":/res/tool1.png";
     }
     if (m->MAPTool[i][j] == 3)
     {
-        m->NOWTool[i][j] = 1;
+        m->NOWTool[i][j] = 3; // POWER
         return ":/res/tool2.png";
     }
     if (m->MAPTool[i][j] == 2)
     {
-        m->NOWTool[i][j] = 1;
+        m->NOWTool[i][j] = 2; // NUMBER
         return ":/res/tool3.png";
     }
     if (m->MAPTool[i][j] == 4)
     {
-        m->NOWTool[i][j] = 1;
+        m->NOWTool[i][j] = 4; // PUSH
         return ":/res/tool4.png";
     }
     else
@@ -708,6 +708,12 @@ void Bomb::onUpdate(float deltaTime)
         transform->setImage(nullptr);
         count++;
         this->bombing(count);
-
+        for (int i = (-1) * power; i <= power; i++)
+        {
+            if (idx + i < 0 || idx + i >= 20|| idy + i < 0 || idy + i >= 15)
+                  continue;
+            m->NOWBomb[idy + i][idx] = 10;
+            m->NOWBomb[idy][idx + i] = 10;
+        }
     }
 }

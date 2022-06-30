@@ -405,6 +405,7 @@ void Player::onUpdate(float deltaTime)
     {
         bombflag = 1;
         m->MAP[idy][idx] = 10;
+        qDebug() << idy << idx;
         bombnum--;
         bombnumflag = 1;
         float curx = (idx + 1) * 50;
@@ -430,16 +431,25 @@ void Player::onUpdate(float deltaTime)
         {
             if (b->getComponent<Bomb>()->interval < -1)
             {
+                 qDebug() <<"debomb" << b->getComponent<Bomb>()->get_x() << b->getComponent<Bomb>()->get_y();
                 if (b->getComponent<Bomb>()->curscore != 0)
                     score += b->getComponent<Bomb>()->curscore, scoreflag = 1;
                 score += b->getComponent<Bomb>()->bombplayer;
+                for (int i = (-1) * bombpower; i <= bombpower; i++)
+                {
+                    if (b->getComponent<Bomb>()->get_y() + i < 0 || b->getComponent<Bomb>()->get_y() + i >= 20|| b->getComponent<Bomb>()->get_x() + i < 0 || b->getComponent<Bomb>()->get_x() + i >= 15)
+                          continue;
+                    qDebug() << i << "de" << b->getComponent<Bomb>()->get_x() << b->getComponent<Bomb>()->get_y();
+                    m->NOWBomb[b->getComponent<Bomb>()->get_x() + i][b->getComponent<Bomb>()->get_y()] = 0;
+                    m->NOWBomb[b->getComponent<Bomb>()->get_x()][b->getComponent<Bomb>()->get_y() + i] = 0;
+                }
                 m->MAP[b->getComponent<Bomb>()->get_x()][b->getComponent<Bomb>()->get_y()] = 0;
                 int st = 0;
                 for (auto it : m->Bomblist)
                 {
                     if (it->getComponent<Bomb>()->get_x() == b->getComponent<Bomb>()->get_x() && it->getComponent<Bomb>()->get_y() == b->getComponent<Bomb>()->get_y())
                     {
-                        //qDebug() <<"debomb" << idy << idx;
+
                         m->Bomblist.remove(st);
                         break;
                     }

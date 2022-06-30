@@ -32,14 +32,36 @@ private:
     int cnt = 0;
     QVector<GameObject *> BombList;
     map *m;
+    QVector<int> tempDiraction;
+    QVector<QPair<int, int>> tempLocation;
+
 public:
+    QVector<int> Diraction;
+    QVector<QPair<int, int>> Location;
     int live = 3;
     int score = 0;
+    int speed = 1;
+    bool speedflag = 0;
+    bool pushable = 0;
+    bool bombnumflag = 0;
+    int bombpower = 1;
+    bool bombflag = 0;
+    bool target = 0;
+    int bombnum = 1;
+    bool bombpowerflag = 0;
     Robot(map *ma,float ix, float iy,int idx, int idy, int idd);
     QVector<GameObject *> mainboard;
+    void changepush();
     int get_id();
     int get_idx();
     int get_idy();
+    void up();
+    void down();
+    void right();
+    void left();
+    bool Find_Tool(int i, int j, int dir);
+    void movebomb(int dir);
+    void GetTool(int i , int j);
     void onAttach() override;
     void onUpdate(float deltaTime) override;
     const char* getImage(int id, int dir, int stage);
@@ -48,6 +70,7 @@ protected:
  Bomb * B = nullptr;
  float cooltime = 0.16;
  float bombtime = 13.2;
+ QTimer *updateTimer = nullptr;
 };
 
 #endif // ROBOT_H
