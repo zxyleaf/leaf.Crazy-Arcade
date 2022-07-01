@@ -199,6 +199,8 @@ void Robot::up()
             dir = 4;
         else if (m->MAP[idy][idx + 1] != 0)
             dir = 3;
+        edge = 1;
+        qDebug() << "edge!!!";
 
     }
 }
@@ -251,6 +253,8 @@ void Robot::down()
             dir = 4;
         else if (m->MAP[idy][idx + 1] != 0)
             dir = 3;
+        edge = 1;
+        qDebug() << "edge!!!";
     }
 }
 void Robot::right()
@@ -299,6 +303,8 @@ void Robot::right()
             dir = 2;
         else if (m->MAP[idy + 1][idx] != 0)
             dir = 1;
+        edge = 1;
+        qDebug() << "edge!!!";
     }
 }
 void Robot::left()
@@ -324,6 +330,7 @@ void Robot::left()
             idx++;
         else
            this->movebomb(3);
+
     }
     else
     {
@@ -337,6 +344,8 @@ void Robot::left()
             dir = 2;
         else if (m->MAP[idy + 1][idx] != 0)
             dir = 1;
+        edge = 1;
+        qDebug() << "edge!!!";
     }
 }
 
@@ -445,6 +454,27 @@ bool Robot::Find_Tool(int i, int j, int dir)
         return true;
 
 
+}
+void Robot::put_bomb()
+{
+    bombflag = 1;
+    m->MAP[idy][idx] = 10;
+    bombnum--;
+    float curx = (idx + 1) * 50;
+    float cury = (idy + 1) * 50;
+    auto bomb = new GameObject();
+    bomb->addComponent(ImageTransformBuilder()
+                           .setPos(QPointF(curx, cury))
+                           .setImage(":/res/custom_bubble3.png")
+                           .setAlignment(Qt::AlignHCenter)
+                           .setAlignment(Qt::AlignVCenter)
+                           .build());
+    bomb->addComponent(new Bomb(m, curx, cury, idx, idy, 3, 1));
+    BombList.emplace_back(bomb);
+    m->Bomblist.emplace_back(bomb);
+    this->attachGameObject(bomb);
+    for (auto b : BombList)
+        b->getComponent<Bomb>()->changepower(bombpower);
 }
 void Robot::movebomb(int dir)
 {
@@ -561,7 +591,7 @@ void Robot::onUpdate(float deltaTime) {
         liveflag = 1;
         if (live < -180)
         {
-            liveflag = 0, live = 3;
+            liveflag = 1, live = 3;
             dir = 0;
             stage = 3, predir = 0;
             walk = 0, walkdir = 0;
@@ -673,19 +703,16 @@ void Robot::onUpdate(float deltaTime) {
             if (m->NOWTool[i + idy][j + idx] != 0)
             {
                 qDebug() << "find" << i << j << i + idy << j + idx;
-                if (Find_Tool(i + idy, j + idx, 3))
+                if (Find_Tool(i + idy, j + idx, 0))
                 {
                     target = 1;
                     qDebug() << "find yes"<< i << j;
                     for (auto it : tempDiraction)
-                    {
-                        qDebug() << "in" <<it;
                         Diraction.emplace_back(it);
-                    }
+
                     for (auto it : tempLocation)
-                    {
                         Location.emplace_back(it);
-                    }
+
                     tempDiraction.clear();
                     tempLocation.clear();
                     Diraction.pop_front();
@@ -698,20 +725,72 @@ void Robot::onUpdate(float deltaTime) {
     }
     }
     if (dir == 1)
+    {
         up();
+        if (edge == 1 && bombnum >= 1)
+        {
+            if (m->MAP[idy - 1][idx] != 0 && m->MAP[idy][idx - 1] != 0 && m->MAP[idy][idx + 1] != 0)
+            {
+                if (bombpower == 1)
+                {
+                    qDebug() << "shang put";
+                    put_bomb();
+                }
+            }
+        }
+        edge = 0;
+    }
     else if (dir == 2)
     {
         down();
+        if (edge == 1 && bombnum >= 1)
+        {
+            if (m->MAP[idy + 1][idx] != 0 && m->MAP[idy][idx - 1] != 0 && m->MAP[idy][idx + 1] != 0)
+            {
+                if (bombpower == 1)
+                {
+                    qDebug() << "xia put";
+                    put_bomb();
+                }
+            }
+        }
+        edge = 0;
     }
     else if (dir == 3)
     {
         left();
+        if (edge == 1 && bombnum >= 1)
+        {
+            if (m->MAP[idy][idx - 1] != 0 && m->MAP[idy + 1][idx] != 0 && m->MAP[idy - 1][idx] != 0)
+            {
+                if (bombpower == 1)
+                {
+                    qDebug() << "zuo put";
+                    put_bomb();
+
+                }
+            }
+        }
+        edge = 0;
     }
     else if (dir == 4)
     {
         right();
+        if (edge == 1 && bombnum >= 1)
+        {
+            if (m->MAP[idy][idx + 1] != 0 && m->MAP[idy + 1][idx] != 0 && m->MAP[idy - 1][idx] != 0)
+            {
+                if (bombpower == 1)
+                {
+                    qDebug() << "you put";
+                    put_bomb();
+                }
+            }
+        }
+        edge = 0;
     }
-    if (bombtime >= 0)
+
+    if (bombtime >= 0 || bombnum <= 0)
         return;
     bombtime = 13.2;
     qDebug() << dir <<  " !!!!!!!!!" << idy << idx - 1;
@@ -799,23 +878,5 @@ void Robot::onUpdate(float deltaTime) {
         return;
     walkdir = 0;
     stopflag = 1;
-    bombflag = 1;
-    m->MAP[idy][idx] = 10;
-    bombnum--;
-    float curx = (idx + 1) * 50;
-    float cury = (idy + 1) * 50;
-    auto bomb = new GameObject();
-    bomb->addComponent(ImageTransformBuilder()
-                           .setPos(QPointF(curx, cury))
-                           .setImage(":/res/custom_bubble3.png")
-                           .setAlignment(Qt::AlignHCenter)
-                           .setAlignment(Qt::AlignVCenter)
-                           .build());
-    bomb->addComponent(new Bomb(m, curx, cury, idx, idy, 3, 1));
-    BombList.emplace_back(bomb);
-    m->Bomblist.emplace_back(bomb);
-    this->attachGameObject(bomb);
-    for (auto b : BombList)
-        b->getComponent<Bomb>()->changepower(bombpower);
-
+    put_bomb();
 }

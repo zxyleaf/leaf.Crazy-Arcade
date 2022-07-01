@@ -23,6 +23,7 @@ class Ammo : public Component {
   void onAttach() override;
   void onUpdate(float deltaTime) override;
   const char* getImage(int type, int i, int j);
+
  protected:
   ImageTransform *transform = nullptr;
   QGraphicsItem *collider = nullptr;

@@ -23,6 +23,7 @@ private:
     int predir = 0;
     int walk = 0;
     int walkdir = 0;
+    bool edge = 0;
     bool liveflag = 0;
     bool flag = 0;
     bool scoreflag = 0;
@@ -59,6 +60,7 @@ public:
     void down();
     void right();
     void left();
+    void put_bomb();
     bool Find_Tool(int i, int j, int dir);
     void movebomb(int dir);
     void GetTool(int i , int j);

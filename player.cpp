@@ -167,13 +167,13 @@ void Player::GetTool(int i, int j)
 
 void Player::movebomb(int dir)
 {
+    m->NOWTool[idy][idx] = 10;
     if (m->MAP[idy][idx] == 10 && pushable == 1)
     {
         for (auto item : m->Bomblist)
         {
             if (item->getComponent<Bomb>()->get_x() == idy && item->getComponent<Bomb>()->get_y() == idx && item->getComponent<Bomb>()->hit == 0)
             {
-                //qDebug() << "inbomb" << idy << idx;
                 auto musictool = new QSoundEffect;
                 musictool->setSource(QUrl::fromLocalFile(":/res/movebomb.wav"));
                 musictool->setVolume(0.15f);

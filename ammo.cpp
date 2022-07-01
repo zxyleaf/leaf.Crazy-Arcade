@@ -24,7 +24,6 @@ void Ammo::onAttach()
 }
 const char *Ammo::getImage(int type, int i, int j)
 {
-
   return "";
 }
 void Ammo::onUpdate(float deltaTime)
