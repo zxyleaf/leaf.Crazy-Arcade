@@ -135,18 +135,18 @@ void MainWindow::loadScene(GameScene *gameScene) {
       auto r1 = new Robot(mm, 250, 550, 4, 10, 1);
         robot1->addComponent(r1);
         gameScene->attachGameObject(robot1);
-//  auto robot2 = new GameObject();
-//    robot2->addComponent(ImageTransformBuilder()
-//        .setPos(QPointF(800, 250))
-//        .setType(110)
-//        .setImage(":/res/robot1s.png")
-//        .setAlignment(Qt::AlignHCenter)
-//        .setAlignment(Qt::AlignVCenter)
-//        .build());
-//    //auto r2 = new Robot(mm, 950, 100, 18, 1, 2);
-//    auto r2 = new Robot(mm, 800, 250, 15, 4, 2);
-//      robot2->addComponent(r2);
-//      gameScene->attachGameObject(robot2);
+  auto robot2 = new GameObject();
+    robot2->addComponent(ImageTransformBuilder()
+        .setPos(QPointF(800, 250))
+        .setType(110)
+        .setImage(":/res/robot1s.png")
+        .setAlignment(Qt::AlignHCenter)
+        .setAlignment(Qt::AlignVCenter)
+        .build());
+    //auto r2 = new Robot(mm, 950, 100, 18, 1, 2);
+    auto r2 = new Robot(mm, 800, 250, 15, 4, 2);
+      robot2->addComponent(r2);
+      gameScene->attachGameObject(robot2);
   auto player1 = new GameObject();
   player1->addComponent(ImageTransformBuilder()
       .setPos(QPointF(250, 250))
@@ -223,8 +223,8 @@ void MainWindow::loadScene(GameScene *gameScene) {
               p2->mainboard.emplace_back(text1);
           else if (time == 3)
               r1->mainboard.emplace_back(text1);
-//          else if (time == 4)
-//              r2->mainboard.emplace_back(text1);
+          else if (time == 4)
+              r2->mainboard.emplace_back(text1);
           gameScene->attachGameObject(text1);
       }
 

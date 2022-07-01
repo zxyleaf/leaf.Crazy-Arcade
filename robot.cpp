@@ -511,7 +511,7 @@ bool Robot::findplacetobomb()
     {
         if (idy + 1 < 15 && m->MAP[idy + 1][idx + 1] == 0)
         {
-            qDebug() << "!!!!!!!!!" << idy << idx + 1;
+            //qDebug() << "!!!!!!!!!" << idy << idx + 1;
             Diraction.emplace_back(4);
             Location.emplace_back(qMakePair(idy,idx + 1));
             Diraction.emplace_back(2);
@@ -641,7 +641,7 @@ void Robot::onUpdate(float deltaTime) {
         return;
     if (live < 1)
     {
-        qDebug() << "live" << live;
+        //qDebug() << "live" << live;
         live = live - 1;
         liveflag = 1;
         if (live < -180)
@@ -764,11 +764,9 @@ void Robot::onUpdate(float deltaTime) {
                 continue;
             if (m->NOWTool[i + idy][j + idx] != 0)
             {
-                qDebug() << "find" << i << j << i + idy << j + idx;
                 if (Find_Tool(i + idy, j + idx, 0))
                 {
                     target = 1;
-                    qDebug() << "find yes"<< i << j;
                     if (m->NOWTool[i + idy][j + idx] == 10)
                         isplayer = 1;
                     else
@@ -778,12 +776,10 @@ void Robot::onUpdate(float deltaTime) {
 
                     for (auto it : tempLocation)
                         Location.emplace_back(it);
-
                     tempDiraction.clear();
                     tempLocation.clear();
                     Diraction.pop_front();
                     Location.pop_front();
-                    qDebug() << "len" << Diraction.length();
                     return;
                 }
             }
@@ -799,7 +795,7 @@ void Robot::onUpdate(float deltaTime) {
             {
                 if (bombpower == 1)
                 {
-                    qDebug() << "shang put";
+                    //qDebug() << "shang put";
                     put_bomb();
                 }
             }
@@ -815,7 +811,7 @@ void Robot::onUpdate(float deltaTime) {
             {
                 if (bombpower == 1)
                 {
-                    qDebug() << "xia put";
+                    //qDebug() << "xia put";
                     put_bomb();
                 }
             }
@@ -830,11 +826,7 @@ void Robot::onUpdate(float deltaTime) {
             if (m->MAP[idy][idx - 1] != 0 && m->MAP[idy + 1][idx] != 0 && m->MAP[idy - 1][idx] != 0)
             {
                 if (bombpower == 1)
-                {
-                    qDebug() << "zuo put";
                     put_bomb();
-
-                }
             }
         }
         edge = 0;
@@ -847,10 +839,7 @@ void Robot::onUpdate(float deltaTime) {
             if (m->MAP[idy][idx + 1] != 0 && m->MAP[idy + 1][idx] != 0 && m->MAP[idy - 1][idx] != 0)
             {
                 if (bombpower == 1)
-                {
-                    qDebug() << "you put";
                     put_bomb();
-                }
             }
         }
         edge = 0;
@@ -859,7 +848,8 @@ void Robot::onUpdate(float deltaTime) {
     if (bombtime >= 0 || bombnum <= 0)
         return;
     bombtime = 13.2;
-    qDebug() << dir <<  " !!!!!!!!!" << idy << idx - 1;
+    if (isplayer == 1)
+        bombtime = 3.3;
     if (findplacetobomb() == false)
         return;
     walkdir = 0;
