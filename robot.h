@@ -29,6 +29,7 @@ private:
     bool scoreflag = 0;
     bool stopflag = 0;
     bool returnflag = 0;
+    bool isplayer = 0;
     float returntime = 0;
     int cnt = 0;
     QVector<GameObject *> BombList;
@@ -53,6 +54,7 @@ public:
     Robot(map *ma,float ix, float iy,int idx, int idy, int idd);
     QVector<GameObject *> mainboard;
     void changepush();
+    bool findplacetobomb();
     int get_id();
     int get_idx();
     int get_idy();

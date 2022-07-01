@@ -168,6 +168,15 @@ void Player::GetTool(int i, int j)
 void Player::movebomb(int dir)
 {
     m->NOWTool[idy][idx] = 10;
+    qDebug() << "!!!" << idy << idx;
+    if (dir == 1)
+        m->NOWTool[idy + 1][idx] = 0;
+    else if (dir == 2)
+        m->NOWTool[idy - 1][idx] = 0;
+    else if (dir == 3)
+        m->NOWTool[idy][idx + 1] = 0;
+    else if (dir == 4)
+        m->NOWTool[idy][idx - 1] = 0;
     if (m->MAP[idy][idx] == 10 && pushable == 1)
     {
         for (auto item : m->Bomblist)
@@ -272,6 +281,7 @@ void Player::onUpdate(float deltaTime)
     }
     float vx = 0, vy = 0, half = 0, bvx = 135, bvy = 135;
     QPointF velocity;
+    m->NOWTool[idy][idx] = 10;
     if (this->whogetKey(id, 1) && flagmove == 0 && live == 3)
     {
         half = (idx + 1) * 50 - 10;

@@ -200,8 +200,6 @@ void Robot::up()
         else if (m->MAP[idy][idx + 1] != 0)
             dir = 3;
         edge = 1;
-        qDebug() << "edge!!!";
-
     }
 }
 void Robot::down()
@@ -254,7 +252,6 @@ void Robot::down()
         else if (m->MAP[idy][idx + 1] != 0)
             dir = 3;
         edge = 1;
-        qDebug() << "edge!!!";
     }
 }
 void Robot::right()
@@ -351,31 +348,6 @@ void Robot::left()
 
 bool Robot::Find_Tool(int i, int j, int dir)
 {
-//    while (i != idy || j != idx)
-//    {
-//        if (dir == 3)
-//        {
-//            if (m->MAP[i - 1][j] == 0 && m->MAP[i][j - 1] != 0)
-//            {
-//                if (Find_Tool(i - 1, j, 3))
-//                {
-//                    tempDiraction.emplace_back(2);
-//                    tempLocation.emplace_back(qMakePair(i - 1, j));
-//                }
-//            }
-//            else if (m->MAP[i][j - 1] == 0 && m->MAP[i - 1][j] != 0)
-//            {
-//                if (Find_Tool(i, j - 1, 3))
-//                {
-//                    tempDiraction.emplace_back(4);
-//                    tempLocation.emplace_back(qMakePair(i, j - 1));
-//                }
-//            }
-//        }
-//    }
-//    return true;
-    int length = abs(idx - j);
-    int wide = abs(idy - i);
     struct node
     {
         int x;
@@ -446,14 +418,11 @@ bool Robot::Find_Tool(int i, int j, int dir)
 
         while(p != qMakePair(0, 0))
         {
-            //qDebug() << "rout" << p;
             tempLocation.push_front(p);
             tempDiraction.push_front(pathdir[p.first * 20 + p.second]);
             p = path[p.first * 20 + p.second];
         }
         return true;
-
-
 }
 void Robot::put_bomb()
 {
@@ -475,6 +444,92 @@ void Robot::put_bomb()
     this->attachGameObject(bomb);
     for (auto b : BombList)
         b->getComponent<Bomb>()->changepower(bombpower);
+}
+bool Robot::findplacetobomb()
+{
+    if ((dir == 1 && idy - 1 >= 0) && m->MAP[idy - 1][idx] == 0 && ((m->NOWBomb[idy - 1][idx + 1] == 0 && m->MAP[idy - 1][idx + 1] == 0) || (m->NOWBomb[idy - 1][idx - 1] == 0 && m->MAP[idy - 1][idx - 1] == 0)))
+    {
+        if (idx + 1 < 20 && m->MAP[idy - 1][idx + 1] == 0)
+        {
+            Diraction.emplace_back(1);
+            Location.emplace_back(qMakePair(idy - 1,idx));
+            Diraction.emplace_back(4);
+            Location.emplace_back(qMakePair(idy - 1,idx + 1));
+        }
+        else if (idx - 1 >= 0 && m->MAP[idy - 1][idx - 1] == 0)
+        {
+            Diraction.emplace_back(1);
+            Location.emplace_back(qMakePair(idy - 1,idx));
+            Diraction.emplace_back(3);
+            Location.emplace_back(qMakePair(idy - 1,idx - 1));
+        }
+        predir = 2, walk = 0;
+        dir = 1;
+    }
+    else if ((dir == 2 && idy + 1 < 15) && m->MAP[idy + 1][idx] == 0 && (m->MAP[idy + 1][idx + 1] == 0 || m->MAP[idy + 1][idx - 1] == 0))
+    {
+        qDebug() << "xia!!!!!!" << idy << idx;
+        if (idx + 1 < 20 && m->MAP[idy + 1][idx + 1] == 0)
+        {
+            Diraction.emplace_back(2);
+            Location.emplace_back(qMakePair(idy + 1,idx));
+            Diraction.emplace_back(4);
+            Location.emplace_back(qMakePair(idy + 1,idx + 1));
+        }
+        else if (idx - 1 >= 0 && m->MAP[idy + 1][idx - 1] == 0)
+        {
+            Diraction.emplace_back(2);
+            Location.emplace_back(qMakePair(idy + 1,idx));
+            Diraction.emplace_back(3);
+            Location.emplace_back(qMakePair(idy + 1,idx - 1));
+        }
+        predir = 1, walk = 0;
+        dir = 2;
+    }
+    else if ((dir == 3 && idx - 1 >= 0) && m->MAP[idy][idx - 1] == 0 && (m->MAP[idy + 1][idx - 1] == 0 || m->MAP[idy - 1][idx - 1] == 0))
+    {
+        if (idy + 1 < 15 && m->MAP[idy + 1][idx - 1] == 0)
+        {
+            //qDebug() << "!!!!!!!!!" << idy << idx - 1;
+            Diraction.emplace_back(3);
+            Location.emplace_back(qMakePair(idy,idx - 1));
+            Diraction.emplace_back(2);
+            Location.emplace_back(qMakePair(idy + 1,idx - 1));
+        }
+        else if (idy - 1 >= 0 && m->MAP[idy - 1][idx - 1] == 0)
+        {
+            //qDebug() << "!!!!!!!!!" << idy << idx - 1;
+            Diraction.emplace_back(3);
+            Location.emplace_back(qMakePair(idy,idx - 1));
+            Diraction.emplace_back(1);
+            Location.emplace_back(qMakePair(idy - 1,idx - 1));
+        }
+        predir = 4, walk = 0;
+        dir = 3;
+    }
+    else if ((dir == 4 && idx + 1 < 20) && m->MAP[idy][idx + 1] == 0 && (m->MAP[idy + 1][idx + 1] == 0 || m->MAP[idy - 1][idx + 1] == 0))
+    {
+        if (idy + 1 < 15 && m->MAP[idy + 1][idx + 1] == 0)
+        {
+            qDebug() << "!!!!!!!!!" << idy << idx + 1;
+            Diraction.emplace_back(4);
+            Location.emplace_back(qMakePair(idy,idx + 1));
+            Diraction.emplace_back(2);
+            Location.emplace_back(qMakePair(idy + 1,idx + 1));
+        }
+        else if (idy - 1 >= 0 && m->MAP[idy - 1][idx + 1] == 0)
+        {
+            Diraction.emplace_back(4);
+            Location.emplace_back(qMakePair(idy,idx + 1));
+            Diraction.emplace_back(1);
+            Location.emplace_back(qMakePair(idy - 1,idx + 1));
+        }
+        predir = 3, walk = 0;
+        dir = 4;
+    }
+    else
+        return false;
+    return true;
 }
 void Robot::movebomb(int dir)
 {
@@ -646,9 +701,16 @@ void Robot::onUpdate(float deltaTime) {
             dir = n;
         }
     }
+   if (bombtime < 0 && isplayer == 1 && bombnum >= 1 && (m->NOWTool[idy][idx] == 10 || m->NOWTool[idy - 1][idx] == 10 || m->NOWTool[idy + 1][idx] == 10))
+    {
+       if (findplacetobomb() == true)
+        {
+           put_bomb();
+            bombtime = 6.6;
+        }
+    }
     if (!Diraction.empty())
     {
-        qDebug() << "follow";
         int temp = Diraction[0];
         if (temp == 1 && (Location[0].first + 1) * 50 < y)
             up();
@@ -707,6 +769,10 @@ void Robot::onUpdate(float deltaTime) {
                 {
                     target = 1;
                     qDebug() << "find yes"<< i << j;
+                    if (m->NOWTool[i + idy][j + idx] == 10)
+                        isplayer = 1;
+                    else
+                        isplayer = 0;
                     for (auto it : tempDiraction)
                         Diraction.emplace_back(it);
 
@@ -794,87 +860,7 @@ void Robot::onUpdate(float deltaTime) {
         return;
     bombtime = 13.2;
     qDebug() << dir <<  " !!!!!!!!!" << idy << idx - 1;
-    if ((dir == 1 && idy - 1 >= 0) && m->MAP[idy - 1][idx] == 0 && ((m->NOWBomb[idy - 1][idx + 1] == 0 && m->MAP[idy - 1][idx + 1] == 0) || (m->NOWBomb[idy - 1][idx - 1] == 0 && m->MAP[idy - 1][idx - 1] == 0)))
-    {
-        if (idx + 1 < 20 && m->MAP[idy - 1][idx + 1] == 0)
-        {
-            Diraction.emplace_back(1);
-            Location.emplace_back(qMakePair(idy - 1,idx));
-            Diraction.emplace_back(4);
-            Location.emplace_back(qMakePair(idy - 1,idx + 1));
-        }
-        else if (idx - 1 >= 0 && m->MAP[idy - 1][idx - 1] == 0)
-        {
-            Diraction.emplace_back(1);
-            Location.emplace_back(qMakePair(idy - 1,idx));
-            Diraction.emplace_back(3);
-            Location.emplace_back(qMakePair(idy - 1,idx - 1));
-        }
-        predir = 2, walk = 0;
-        dir = 1;
-    }
-    else if ((dir == 2 && idy + 1 < 15) && m->MAP[idy + 1][idx] == 0 && (m->MAP[idy + 1][idx + 1] == 0 || m->MAP[idy + 1][idx - 1] == 0))
-    {
-        qDebug() << "xia!!!!!!" << idy << idx;
-        if (idx + 1 < 20 && m->MAP[idy + 1][idx + 1] == 0)
-        {
-            Diraction.emplace_back(2);
-            Location.emplace_back(qMakePair(idy + 1,idx));
-            Diraction.emplace_back(4);
-            Location.emplace_back(qMakePair(idy + 1,idx + 1));
-        }
-        else if (idx - 1 >= 0 && m->MAP[idy + 1][idx - 1] == 0)
-        {
-            Diraction.emplace_back(2);
-            Location.emplace_back(qMakePair(idy + 1,idx));
-            Diraction.emplace_back(3);
-            Location.emplace_back(qMakePair(idy + 1,idx - 1));
-        }
-        predir = 1, walk = 0;
-        dir = 2;
-    }
-    else if ((dir == 3 && idx - 1 >= 0) && m->MAP[idy][idx - 1] == 0 && (m->MAP[idy + 1][idx - 1] == 0 || m->MAP[idy - 1][idx - 1] == 0))
-    {
-        if (idy + 1 < 15 && m->MAP[idy + 1][idx - 1] == 0)
-        {
-            //qDebug() << "!!!!!!!!!" << idy << idx - 1;
-            Diraction.emplace_back(3);
-            Location.emplace_back(qMakePair(idy,idx - 1));
-            Diraction.emplace_back(2);
-            Location.emplace_back(qMakePair(idy + 1,idx - 1));
-        }
-        else if (idy - 1 >= 0 && m->MAP[idy - 1][idx - 1] == 0)
-        {
-            //qDebug() << "!!!!!!!!!" << idy << idx - 1;
-            Diraction.emplace_back(3);
-            Location.emplace_back(qMakePair(idy,idx - 1));
-            Diraction.emplace_back(1);
-            Location.emplace_back(qMakePair(idy - 1,idx - 1));
-        }
-        predir = 4, walk = 0;
-        dir = 3;
-    }
-    else if ((dir == 4 && idx + 1 < 20) && m->MAP[idy][idx + 1] == 0 && (m->MAP[idy + 1][idx + 1] == 0 || m->MAP[idy - 1][idx + 1] == 0))
-    {
-        if (idy + 1 < 15 && m->MAP[idy + 1][idx + 1] == 0)
-        {
-            qDebug() << "!!!!!!!!!" << idy << idx + 1;
-            Diraction.emplace_back(4);
-            Location.emplace_back(qMakePair(idy,idx + 1));
-            Diraction.emplace_back(2);
-            Location.emplace_back(qMakePair(idy + 1,idx + 1));
-        }
-        else if (idy - 1 >= 0 && m->MAP[idy - 1][idx + 1] == 0)
-        {
-            Diraction.emplace_back(4);
-            Location.emplace_back(qMakePair(idy,idx + 1));
-            Diraction.emplace_back(1);
-            Location.emplace_back(qMakePair(idy - 1,idx + 1));
-        }
-        predir = 3, walk = 0;
-        dir = 4;
-    }
-    else
+    if (findplacetobomb() == false)
         return;
     walkdir = 0;
     stopflag = 1;
